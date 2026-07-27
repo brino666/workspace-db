@@ -28,7 +28,7 @@ export const bountyProgramsTable = pgTable("bounty_programs", {
   techSignals:    jsonb("tech_signals").notNull().default({}),   // Record<string,any>
   disclosedCount: integer("disclosed_count").notNull().default(0),
   probeGuide:     jsonb("probe_guide").notNull().default([]),    // probe item objects[]
-  status:         text("status").notNull().default("active"),    // active | archived
+  status:         text("status").notNull().default("analysing"), // analysing | active | failed | archived
   addedAt:        timestamp("added_at").notNull().defaultNow(),
   analysedAt:     timestamp("analysed_at"),
 });
@@ -75,6 +75,7 @@ export type BountyFinding = typeof bountyFindingsTable.$inferSelect;
 // ---------------------------------------------------------------------------
 
 export const FINDING_TRANSITIONS: Record<string, string[]> = {
+  drafting:   ["draft"],                                   // AI finishing → ready to review
   draft:      ["submitted", "duplicate"],
   submitted:  ["triaged", "needs_info", "duplicate"],
   triaged:    ["accepted", "needs_info", "duplicate"],
